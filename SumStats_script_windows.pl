@@ -48,6 +48,7 @@ foreach my $pop (@pops_to_analyze){
 }
 
 print TESTOUT $sum_total, "\n" ;
+close TESTOUT ;
 
 # Input file in format: Scaffold /t Position /t Derived alleles counts in pop0 /t Derived alleles counts in pop1 
 open IN, "<$workdir/$filename" ;
@@ -91,9 +92,9 @@ while(<IN>){
 close IN ;
 
 foreach my $win (sort{$a<=>$b} keys %AFS){
-foreach my $pop (@pops_to_analyze){
-$seg_sites_hash{$win}{$pop} = seg_sites(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
-}
+	foreach my $pop (@pops_to_analyze){
+		$seg_sites_hash{$win}{$pop} = seg_sites(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
+	}
 }
 
 foreach my $win (sort{$a<=>$b} keys %AFS){
@@ -107,77 +108,76 @@ foreach my $win (sort{$a<=>$b} keys %AFS){
 }
 
 foreach my $win (sort{$a<=>$b} keys %AFS){
-foreach my $pop (@pops_to_analyze){
-$theta_pi_hash{$win}{$pop} = theta_pi(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
-}
-}
-
-foreach my $win (sort{$a<=>$b} keys %AFS){
-foreach my $pop (@pops_to_analyze){
-$theta_W_hash{$win}{$pop} = theta_W(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
-}
+	foreach my $pop (@pops_to_analyze){
+		$theta_pi_hash{$win}{$pop} = theta_pi(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
+	}
 }
 
 foreach my $win (sort{$a<=>$b} keys %AFS){
-foreach my $pop (@pops_to_analyze){
-$theta_H_hash{$win}{$pop} = theta_H(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
-}
-}
-
-foreach my $win (sort{$a<=>$b} keys %AFS){
-foreach my $pop (@pops_to_analyze){
-$theta_L_hash{$win}{$pop} = theta_L(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
-}
+	foreach my $pop (@pops_to_analyze){
+		$theta_W_hash{$win}{$pop} = theta_W(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
+	}
 }
 
 foreach my $win (sort{$a<=>$b} keys %AFS){
-foreach my $pop (@pops_to_analyze){
-$Taj_D_hash{$win}{$pop} = Taj_D($theta_pi_hash{$win}{$pop}, $theta_W_hash{$win}{$pop}, $seg_sites_hash{$win}{$pop}, $nuc{$pop}) ;
-}
+	foreach my $pop (@pops_to_analyze){
+		$theta_H_hash{$win}{$pop} = theta_H(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
+	}
 }
 
 foreach my $win (sort{$a<=>$b} keys %AFS){
-foreach my $pop (@pops_to_analyze){
-$FayWu_H_hash{$win}{$pop} = Fay_Wu_H($theta_pi_hash{$win}{$pop}, $theta_L_hash{$win}{$pop}, $theta_W_hash{$win}{$pop}, $seg_sites_hash{$win}{$pop}, $nuc{$pop}) ;
+	foreach my $pop (@pops_to_analyze){
+		$theta_L_hash{$win}{$pop} = theta_L(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
+	}
 }
+
+foreach my $win (sort{$a<=>$b} keys %AFS){
+	foreach my $pop (@pops_to_analyze){
+		$Taj_D_hash{$win}{$pop} = Taj_D($theta_pi_hash{$win}{$pop}, $theta_W_hash{$win}{$pop}, $seg_sites_hash{$win}{$pop}, $nuc{$pop}) ;
+	}
+}
+
+foreach my $win (sort{$a<=>$b} keys %AFS){
+	foreach my $pop (@pops_to_analyze){
+		$FayWu_H_hash{$win}{$pop} = Fay_Wu_H($theta_pi_hash{$win}{$pop}, $theta_L_hash{$win}{$pop}, $theta_W_hash{$win}{$pop}, $seg_sites_hash{$win}{$pop}, $nuc{$pop}) ;
+	}
 }
 
 open OUT, ">./SUMSTATS.FOR.${pops_to_analyze[0]}.${pops_to_analyze[1]}.${window_size}SNPwin.DP4" ;
 print OUT "window", "\t", "scaffold", "\t", "start", "\t", "end", "\t", "GSTprime", "\t", "pi_${pops_to_analyze[0]}", "\t", "pi_${pops_to_analyze[1]}", "\t", "W_${pops_to_analyze[0]}", "\t", "W_${pops_to_analyze[1]}", "\t", "TajD_${pops_to_analyze[0]}", "\t", "TajD_${pops_to_analyze[1]}","\t", "FayWuH_${pops_to_analyze[0]}","\t", "FayWuH_${pops_to_analyze[1]}";
 
 foreach my $win (sort{$a<=>$b} keys %GstPrime_hash){
-print OUT "\n" ;
-print OUT $win, "\t",  ;
-my $num_sites = 0 ;
-foreach my $scaff(keys %{$sites{$win}}){
-print OUT $scaff, "\t" ;
-# $# calls the last index of the array
-print OUT ${$sites{$win}{$scaff}}[0], "\t", ${$sites{$win}{$scaff}}[$#{$sites{$win}{$scaff}}], "\t" ;
-$num_sites = ${$sites{$win}{$scaff}}[$#{$sites{$win}{$scaff}}]-${$sites{$win}{$scaff}}[0] ;
-}
-print OUT $GstPrime_hash{$win}, "\t"  ;
-if($num_sites>0){
-foreach my $pop (@pops_to_analyze){
-print OUT $theta_pi_hash{$win}{$pop}/($num_sites), "\t" ;}
-foreach my $pop (@pops_to_analyze){
-print OUT $theta_W_hash{$win}{$pop}/($num_sites), "\t" ;}
-}
-else{
-foreach my $pop (@pops_to_analyze){
-print OUT "NaN", "\t" ;}
-foreach my $pop (@pops_to_analyze){
-print OUT "NaN", "\t" ;}
-}
-foreach my $pop (@pops_to_analyze){
-print OUT $Taj_D_hash{$win}{$pop}, "\t" ;
-}
-foreach my $pop (@pops_to_analyze){
-print OUT $FayWu_H_hash{$win}{$pop}, "\t" ;
-}
+	print OUT "\n" ;
+	print OUT $win, "\t",  ;
+	my $num_sites = 0 ;
+	foreach my $scaff(keys %{$sites{$win}}){
+		print OUT $scaff, "\t" ;
+		# $# calls the last index of the array
+		print OUT ${$sites{$win}{$scaff}}[0], "\t", ${$sites{$win}{$scaff}}[$#{$sites{$win}{$scaff}}], "\t" ;
+		$num_sites = ${$sites{$win}{$scaff}}[$#{$sites{$win}{$scaff}}]-${$sites{$win}{$scaff}}[0] ;
+	}
+	print OUT $GstPrime_hash{$win}, "\t"  ;
+	if($num_sites>0){
+		foreach my $pop (@pops_to_analyze){
+			print OUT $theta_pi_hash{$win}{$pop}/($num_sites), "\t" ;}
+		foreach my $pop (@pops_to_analyze){
+			print OUT $theta_W_hash{$win}{$pop}/($num_sites), "\t" ;}
+	}
+	else{
+		foreach my $pop (@pops_to_analyze){
+			print OUT "NaN", "\t" ;}
+		foreach my $pop (@pops_to_analyze){
+			print OUT "NaN", "\t" ;}
+	}
+	foreach my $pop (@pops_to_analyze){
+		print OUT $Taj_D_hash{$win}{$pop}, "\t" ;
+	}
+	foreach my $pop (@pops_to_analyze){
+		print OUT $FayWu_H_hash{$win}{$pop}, "\t" ;
+	}
 }
 
 close OUT;
-close TESTOUT ;
 exit ;
 
 ########### SUBROUTINES
@@ -185,6 +185,12 @@ exit ;
 # for calculations, see "Statistical Tests for Detecting Positive Selection by Utilizing High-Frequency Variants"
 
 
+sub bc {
+	my ($n,$k) = @_;
+	my $r=1;
+	$r*=$n/($n-$k),$n--while$n>$k;
+	$r;
+}
 
 sub GstPrime{
 	my ($AFS, $pop1_index, $pop2_index, $n_pop1, $n_pop2) = @_ ;
