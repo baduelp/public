@@ -35,7 +35,7 @@ my $popNB0 = $ARGV[2];
 my $popNB1 = $ARGV[3];
 my $workdir = $ARGV[4];
 my $filename = $ARGV[5];
-open TESTOUT, ">./testout.FST.$pop0.$pop1" ;
+open TESTOUT, ">./testout.FST.$pop0.$pop1.txt" ;
 
 my %nuc ; 
 # Enter number of chromosomes for each pop
@@ -130,7 +130,7 @@ foreach my $scaff(keys %AFS){
 	}
 }
 
-open OUT, ">./SUMSTATS.FOR.${pops_to_analyze[0]}.${pops_to_analyze[1]}.${window_size}SNPwin.DP4" ;
+open OUT, ">./SUMSTATS.FOR.${pops_to_analyze[0]}.${pops_to_analyze[1]}.${window_size}SNPwin.txt" ;
 print OUT "scaffold", "\t", "start", "\t", "end", "\t","seg_sites", "\t", "GSTprime", "\t", "pi_${pops_to_analyze[0]}", "\t", "pi_${pops_to_analyze[1]}", "\t", "W_${pops_to_analyze[0]}", "\t", "W_${pops_to_analyze[1]}", "\t", "TajD_${pops_to_analyze[0]}", "\t", "TajD_${pops_to_analyze[1]}","\t", "FayWuH_${pops_to_analyze[0]}","\t", "FayWuH_${pops_to_analyze[1]}";
 
 foreach my $scaff(keys %AFS){
