@@ -8,7 +8,7 @@ my $window_size = 25 ;
 my %header ;
 my %pi ;
 my %sites ;
-my $count = 0 ;
+my %count;
 my %header2 ;
 my %AFS ;	#$AFS{window}{pop}{scaffold}{pos}
 my %data ;
@@ -17,6 +17,7 @@ my %nonzero ;
 
 my %GstPrime_hash ;
 my %seg_sites_hash ;
+my %all_seg_sites_hash ;
 my %theta_pi_hash ;
 my %theta_W_hash ;
 my %theta_L_hash ;
@@ -66,114 +67,102 @@ while(<IN>){
 		else{
 			my $sum = 0 ;
 			foreach my $index (2..$#line){
-			$sum += $line[$#line] ;
+			$sum += $line[$index] ;
 			}
-
-			my $window ;
+			
+			# initialize snp count for each scaffold
+			if (! exists $count{$line[0]}){ 
+				$count{$line[0]}=0;
+			}
+			
 			# Only increment count when SNP is variable
 			if($sum>0 && $sum<$sum_total){
-				$count ++ ;
-				$window = int($count/$window_size) ;	     
+				$count{$line[0]} ++ ;       
 			}
-			else{
-				$window = int($count/$window_size) ;	     
-			}
+			my $window = int(($count{$line[0]}-1)/$window_size) ;	     
 
 			# Add all snp positions of the window to sites array
-			push @{$sites{$window}{$line[0]}}, $line[1] ;
+			push @{$sites{$line[0]}{$window}}, $line[1] ;
 
 			# Add all allele counts to AFS array
 			foreach my $index (2..$#line){
-				$AFS{$window}{$header{$index}}{$line[0]}{$line[1]} = $line[$index] ;
+				$AFS{$line[0]}{$window}{$header{$index}}{$line[1]} = $line[$index] ;
 			}
         }
     }
 
 close IN ;
 
-foreach my $win (sort{$a<=>$b} keys %AFS){
-	foreach my $pop (@pops_to_analyze){
-		$seg_sites_hash{$win}{$pop} = seg_sites(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
+foreach my $scaff(keys %AFS){
+	foreach my $win (sort{$a<=>$b} keys %{$AFS{$scaff}}){
+		foreach my $pop (@pops_to_analyze){
+			$seg_sites_hash{$scaff}{$win}{$pop} = seg_sites(\%{$AFS{$scaff}{$win}{$pop}}, $nuc{$pop}) ;
+		}
 	}
 }
 
-foreach my $win (sort{$a<=>$b} keys %AFS){
-	my $seg_sites = 0 ;
-	foreach my $pop (@pops_to_analyze){
-		$seg_sites += $seg_sites_hash{$win}{$pop} ;
-	}
-	if($seg_sites>=$window_size){
-		$GstPrime_hash{$win} = GstPrime(\%{$AFS{$win}}, $pop0, $pop1, $nuc{$pop0}, $nuc{$pop1}) ;
-	}
-}
-
-foreach my $win (sort{$a<=>$b} keys %AFS){
-	foreach my $pop (@pops_to_analyze){
-		$theta_pi_hash{$win}{$pop} = theta_pi(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
-	}
-}
-
-foreach my $win (sort{$a<=>$b} keys %AFS){
-	foreach my $pop (@pops_to_analyze){
-		$theta_W_hash{$win}{$pop} = theta_W(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
-	}
-}
-
-foreach my $win (sort{$a<=>$b} keys %AFS){
-	foreach my $pop (@pops_to_analyze){
-		$theta_H_hash{$win}{$pop} = theta_H(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
-	}
-}
-
-foreach my $win (sort{$a<=>$b} keys %AFS){
-	foreach my $pop (@pops_to_analyze){
-		$theta_L_hash{$win}{$pop} = theta_L(\%{$AFS{$win}{$pop}}, $nuc{$pop}) ;
-	}
-}
-
-foreach my $win (sort{$a<=>$b} keys %AFS){
-	foreach my $pop (@pops_to_analyze){
-		$Taj_D_hash{$win}{$pop} = Taj_D($theta_pi_hash{$win}{$pop}, $theta_W_hash{$win}{$pop}, $seg_sites_hash{$win}{$pop}, $nuc{$pop}) ;
-	}
-}
-
-foreach my $win (sort{$a<=>$b} keys %AFS){
-	foreach my $pop (@pops_to_analyze){
-		$FayWu_H_hash{$win}{$pop} = Fay_Wu_H($theta_pi_hash{$win}{$pop}, $theta_L_hash{$win}{$pop}, $theta_W_hash{$win}{$pop}, $seg_sites_hash{$win}{$pop}, $nuc{$pop}) ;
+foreach my $scaff(keys %AFS){
+	foreach my $win (sort{$a<=>$b} keys %{$AFS{$scaff}}){
+		$all_seg_sites_hash{$scaff}{$win} = all_seg_sites(\%{$AFS{$scaff}{$win}}, %nuc);
+		# print TESTOUT $scaff, "\t" , $win, "\t" , $all_seg_sites_hash{$scaff}{$win}, "\n" ;
+		if($all_seg_sites_hash{$scaff}{$win}>=$window_size){
+			$GstPrime_hash{$scaff}{$win} = GstPrime(\%{$AFS{$scaff}{$win}}, $pop0, $pop1, $nuc{$pop0}, $nuc{$pop1}) ;
+			foreach my $pop (@pops_to_analyze){
+				$theta_pi_hash{$scaff}{$win}{$pop} = theta_pi(\%{$AFS{$scaff}{$win}{$pop}}, $nuc{$pop}) ;
+				$theta_W_hash{$scaff}{$win}{$pop} = theta_W(\%{$AFS{$scaff}{$win}{$pop}}, $nuc{$pop}) ;
+				$theta_H_hash{$scaff}{$win}{$pop} = theta_H(\%{$AFS{$scaff}{$win}{$pop}}, $nuc{$pop}) ;
+				$theta_L_hash{$scaff}{$win}{$pop} = theta_L(\%{$AFS{$scaff}{$win}{$pop}}, $nuc{$pop}) ;
+				$Taj_D_hash{$scaff}{$win}{$pop} = Taj_D($theta_pi_hash{$scaff}{$win}{$pop}, $theta_W_hash{$scaff}{$win}{$pop}, $seg_sites_hash{$scaff}{$win}{$pop}, $nuc{$pop}) ;
+				$FayWu_H_hash{$scaff}{$win}{$pop} = Fay_Wu_H($theta_pi_hash{$scaff}{$win}{$pop}, $theta_L_hash{$scaff}{$win}{$pop}, $theta_W_hash{$scaff}{$win}{$pop}, $seg_sites_hash{$scaff}{$win}{$pop}, $nuc{$pop}) ;
+			}
+		}
+		else{
+			$GstPrime_hash{$scaff}{$win} = 'NA';
+			foreach my $pop (@pops_to_analyze){
+				$theta_pi_hash{$scaff}{$win}{$pop} = 'NA';
+				$theta_W_hash{$scaff}{$win}{$pop} = 'NA';
+				$theta_H_hash{$scaff}{$win}{$pop} = 'NA';
+				$theta_L_hash{$scaff}{$win}{$pop} = 'NA';
+				$Taj_D_hash{$scaff}{$win}{$pop} = 'NA';
+				$FayWu_H_hash{$scaff}{$win}{$pop} = 'NA';
+			}
+		}
 	}
 }
 
 open OUT, ">./SUMSTATS.FOR.${pops_to_analyze[0]}.${pops_to_analyze[1]}.${window_size}SNPwin.DP4" ;
-print OUT "window", "\t", "scaffold", "\t", "start", "\t", "end", "\t", "GSTprime", "\t", "pi_${pops_to_analyze[0]}", "\t", "pi_${pops_to_analyze[1]}", "\t", "W_${pops_to_analyze[0]}", "\t", "W_${pops_to_analyze[1]}", "\t", "TajD_${pops_to_analyze[0]}", "\t", "TajD_${pops_to_analyze[1]}","\t", "FayWuH_${pops_to_analyze[0]}","\t", "FayWuH_${pops_to_analyze[1]}";
+print OUT "scaffold", "\t", "start", "\t", "end", "\t","seg_sites", "\t", "GSTprime", "\t", "pi_${pops_to_analyze[0]}", "\t", "pi_${pops_to_analyze[1]}", "\t", "W_${pops_to_analyze[0]}", "\t", "W_${pops_to_analyze[1]}", "\t", "TajD_${pops_to_analyze[0]}", "\t", "TajD_${pops_to_analyze[1]}","\t", "FayWuH_${pops_to_analyze[0]}","\t", "FayWuH_${pops_to_analyze[1]}";
 
-foreach my $win (sort{$a<=>$b} keys %GstPrime_hash){
-	print OUT "\n" ;
-	print OUT $win, "\t",  ;
-	my $num_sites = 0 ;
-	foreach my $scaff(keys %{$sites{$win}}){
+foreach my $scaff(keys %AFS){
+	foreach my $win (sort{$a<=>$b} keys %{$AFS{$scaff}}){
+		print OUT "\n" ;
 		print OUT $scaff, "\t" ;
+		my $num_sites = 0 ;
 		# $# calls the last index of the array
-		print OUT ${$sites{$win}{$scaff}}[0], "\t", ${$sites{$win}{$scaff}}[$#{$sites{$win}{$scaff}}], "\t" ;
-		$num_sites = ${$sites{$win}{$scaff}}[$#{$sites{$win}{$scaff}}]-${$sites{$win}{$scaff}}[0] ;
-	}
-	print OUT $GstPrime_hash{$win}, "\t"  ;
-	if($num_sites>0){
+		print OUT ${$sites{$scaff}{$win}}[0], "\t", ${$sites{$scaff}{$win}}[$#{$sites{$scaff}{$win}}], "\t" ;
+		$num_sites = ${$sites{$scaff}{$win}}[$#{$sites{$scaff}{$win}}]-${$sites{$scaff}{$win}}[0] ;
+		print OUT $all_seg_sites_hash{$scaff}{$win}, "\t"  ;
+		print OUT $GstPrime_hash{$scaff}{$win}, "\t"  ;
+		if($all_seg_sites_hash{$scaff}{$win}>=$window_size){
+			foreach my $pop (@pops_to_analyze){
+				print OUT sprintf("%.3e",$theta_pi_hash{$scaff}{$win}{$pop}/($num_sites)), "\t" ;
+				}
+			foreach my $pop (@pops_to_analyze){
+				print OUT sprintf("%.3e",$theta_W_hash{$scaff}{$win}{$pop}/($num_sites)), "\t" ;
+				}
+		}
+		else{
+			foreach my $pop (@pops_to_analyze){
+				print OUT "NA", "\t" ;}
+			foreach my $pop (@pops_to_analyze){
+				print OUT "NA", "\t" ;}
+			}
 		foreach my $pop (@pops_to_analyze){
-			print OUT $theta_pi_hash{$win}{$pop}/($num_sites), "\t" ;}
+			print OUT $Taj_D_hash{$scaff}{$win}{$pop}, "\t" ;
+		}
 		foreach my $pop (@pops_to_analyze){
-			print OUT $theta_W_hash{$win}{$pop}/($num_sites), "\t" ;}
-	}
-	else{
-		foreach my $pop (@pops_to_analyze){
-			print OUT "NaN", "\t" ;}
-		foreach my $pop (@pops_to_analyze){
-			print OUT "NaN", "\t" ;}
-	}
-	foreach my $pop (@pops_to_analyze){
-		print OUT $Taj_D_hash{$win}{$pop}, "\t" ;
-	}
-	foreach my $pop (@pops_to_analyze){
-		print OUT $FayWu_H_hash{$win}{$pop}, "\t" ;
+			print OUT $FayWu_H_hash{$scaff}{$win}{$pop}, "\t" ;
+		}
 	}
 }
 
@@ -197,38 +186,34 @@ sub GstPrime{
 	my $Gst_total = 0 ;
 	my $count = 0 ;
 	my $num_pops = 2 ;
-	foreach my $scaff ( keys ( %{$$AFS{$pop1_index}} )){
-		foreach my $pos (keys ( %{$$AFS{$pop1_index}{$scaff}} )){
-			my $AF1 = $$AFS{$pop1_index}{$scaff}{$pos}/$n_pop1 ;
-			my $AF2 = $$AFS{$pop2_index}{$scaff}{$pos}/$n_pop2 ;
-			if( ($AF1+$AF2)>0 && ($AF1+$AF2)<($num_pops) ){
-				$count ++ ;
-				my $Gst = 0 ;
-				my $Gst_max = 0 ;
-				my $p_bar = (($AF1 + $AF2)/2);
-				my $Ht = 2*($p_bar)*(1-$p_bar) ;
-				my $Hs =  (2*$AF1*(1-$AF1) + 2*$AF2*(1-$AF2))/2;
-				if( $Ht == 0 ){
-					$Gst = 0 ;
-				}else{
-					$Gst = (($Ht - $Hs)/$Ht) ;
-					$Gst_max = ($num_pops-1)*(1-$Hs)/($num_pops-1+$Hs);
-					$Gst = $Gst/$Gst_max ;
-				}
-				$Gst_total += $Gst ;
+	foreach my $pos ( keys ( %{$$AFS{$pop1_index}} )){
+		my $AF1 = $$AFS{$pop1_index}{$pos}/$n_pop1 ;
+		my $AF2 = $$AFS{$pop2_index}{$pos}/$n_pop2 ;
+		if( ($AF1+$AF2)>0 && ($AF1+$AF2)<($num_pops) ){
+			$count ++ ;
+			my $Gst = 0 ;
+			my $Gst_max = 0 ;
+			my $p_bar = (($AF1 + $AF2)/2);
+			my $Ht = 2*($p_bar)*(1-$p_bar) ;
+			my $Hs =  (2*$AF1*(1-$AF1) + 2*$AF2*(1-$AF2))/2;
+			if( $Ht == 0 ){
+				$Gst = 0 ;
+			}else{
+				$Gst = (($Ht - $Hs)/$Ht) ;
+				$Gst_max = ($num_pops-1)*(1-$Hs)/($num_pops-1+$Hs);
+				$Gst = $Gst/$Gst_max ;
 			}
+			$Gst_total += $Gst ;
 		}
 	}
-	return($Gst_total/$count) ;
+	return(sprintf("%.3f",$Gst_total/$count)) ;
 }
 
 sub total_sites{
 	my ($AFS) = @_ ;
 	my $count = 0 ;
-	foreach my $scaff ( keys ( %$AFS )){
-		foreach my $pos (keys ( %{$$AFS{$scaff}} )){
-			$count ++ ;
-		}
+	foreach my $pos ( keys ( %$AFS )){
+		$count ++ ;
 	}
 	return($count) ;
 }
@@ -236,14 +221,28 @@ sub total_sites{
 sub fixed_diffs{
 	my ($AFS, $n) = @_ ;
 	my $count = 0 ;
-	foreach my $scaff ( keys ( %$AFS )){
-		foreach my $pos (keys ( %{$$AFS{$scaff}} )){
-			if($$AFS{$scaff}{$pos} == $n){
-				$count ++ ;
-			}
+	foreach my $pos ( keys ( %$AFS )){
+		if($$AFS{$pos} == $n){
+			$count ++ ;
 		}
 	}
 	return($count) ;
+}
+
+sub all_seg_sites{
+	#returns seg sites, #singletons
+	my ($AFS, %nuc) = @_ ;
+	my %seg_sites ;
+	foreach my $pop ( keys %$AFS ){
+		my $n = $nuc{$pop};
+		foreach my $pos ( keys %{$$AFS{$pop}}){
+			if(($$AFS{$pop}{$pos} > 0) && ($$AFS{$pop}{$pos} < $n)){
+				$seg_sites{$pos} = 1 ;
+			}
+		}	
+	}
+	my $S = keys %seg_sites;
+	return($S) ;
 }
 
 sub seg_sites{
@@ -251,28 +250,25 @@ sub seg_sites{
 	my ($AFS, $n) = @_ ;
 	my $S = 0 ;
 	my $S_singleton = 0 ;
-	foreach my $scaff ( keys ( %$AFS )){
-		foreach my $pos (keys ( %{$$AFS{$scaff}} )){
-			if(($$AFS{$scaff}{$pos} > 0) && ($$AFS{$scaff}{$pos} < $n)){
-				$S += 1 ;
-			}
-			if($$AFS{$scaff}{$pos} == 1){
-				$S_singleton ++ ;
-			}
+	foreach my $pos ( keys ( %$AFS )){
+		if(($$AFS{$pos} > 0) && ($$AFS{$pos} < $n)){
+			$S += 1 ;
+		}
+		if($$AFS{$pos} == 1){
+			$S_singleton ++ ;
 		}
 	}	
 	return($S) ;
 }
+
 sub singletons{
 	#returns seg sites, #singletons
 	my ($AFS, $n) = @_ ;
 	my $S = 0 ;
 	my $S_singleton = 0 ;
-	foreach my $scaff ( keys ( %$AFS )){
-		foreach my $pos (keys ( %{$$AFS{$scaff}} )){
-			if($$AFS{$scaff}{$pos} == 1){
-				$S_singleton ++ ;
-			}
+	foreach my $pos ( keys ( %$AFS )){
+		if($$AFS{$pos} == 1){
+			$S_singleton ++ ;
 		}
 	}	
 	return($S_singleton) ;
@@ -282,11 +278,9 @@ sub theta_pi{
 	#usage: theta_H(\%AFS, $n), where AFS is $AFS{scaff}{pos}
 	my ($AFS, $n) = @_ ;
 	my $theta_pi = 0 ;
-	foreach my $scaff ( keys ( %$AFS )){
-		foreach my $pos (keys ( %{$$AFS{$scaff}} )){
-			if(($$AFS{$scaff}{$pos} > 0) && ($$AFS{$scaff}{$pos} < $n)){
-				$theta_pi += (($$AFS{$scaff}{$pos})*($n-$$AFS{$scaff}{$pos}))/bc($n,2) ;
-			}
+	foreach my $pos ( keys ( %$AFS )){
+		if(($$AFS{$pos} > 0) && ($$AFS{$pos} < $n)){
+			$theta_pi += (($$AFS{$pos})*($n-$$AFS{$pos}))/bc($n,2) ;
 		}
 	}
 	return($theta_pi) ;
@@ -299,11 +293,9 @@ sub theta_W{
 	foreach ( 1 .. ($n - 1) ) { 
 		$a = $a + 1/$_ ; 
 	}
-	foreach my $scaff ( keys ( %$AFS )){
-		foreach my $pos (keys ( %{$$AFS{$scaff}} )){
-			if(($$AFS{$scaff}{$pos} > 0) && ($$AFS{$scaff}{$pos} < $n)){
-				$theta_W += 1/$a ;
-			}
+	foreach my $pos ( keys ( %$AFS )){
+		if(($$AFS{$pos} > 0) && ($$AFS{$pos} < $n)){
+			$theta_W += 1/$a ;
 		}
 	}
 	return($theta_W) ;
@@ -312,11 +304,9 @@ sub theta_W{
 sub theta_H{
 	my ($AFS, $n) = @_ ;
 	my $theta_H = 0 ;	
-	foreach my $scaff ( keys ( %$AFS )){
-		foreach my $pos (keys ( %{$$AFS{$scaff}} )){
-			if(($$AFS{$scaff}{$pos} > 0) && ($$AFS{$scaff}{$pos} < $n)){
-				$theta_H += (($$AFS{$scaff}{$pos})**2)/bc($n,2) ;
-			}
+	foreach my $pos ( keys ( %$AFS )){
+		if(($$AFS{$pos} > 0) && ($$AFS{$pos} < $n)){
+			$theta_H += (($$AFS{$pos})**2)/bc($n,2) ;
 		}
 	}
 	return($theta_H) ;
@@ -325,11 +315,9 @@ sub theta_H{
 sub theta_L{
 	my ($AFS, $n) = @_ ;
 	my $theta_L = 0 ;	
-	foreach my $scaff ( keys ( %$AFS )){
-		foreach my $pos (keys ( %{$$AFS{$scaff}} )){
-			if(($$AFS{$scaff}{$pos} > 0) && ($$AFS{$scaff}{$pos} < $n)){
-				$theta_L += (($$AFS{$scaff}{$pos}))/($n-1) ;
-			}
+	foreach my $pos ( keys ( %$AFS )){
+		if(($$AFS{$pos} > 0) && ($$AFS{$pos} < $n)){
+			$theta_L += (($$AFS{$pos}))/($n-1) ;
 		}
 	}
 	return($theta_L) ;
@@ -348,7 +336,7 @@ sub Taj_D{
 	my $e2 = (1/($a1**2 + $a2))*((2*(($n**2) + $n + 3))/(9*$n*($n-1)) - ($n+2)/($n*$a1) + ($a2)/($a1**2)) ;
 	if ( (sqrt($S*$e1 + $S*($S-1)*$e2)) > 0 ) { 
 		$tajD = ($theta_pi - $theta_W) / (sqrt($S*$e1 + $S*($S-1)*$e2)) ; 
-		return ($tajD) ;
+		return (sprintf("%.3f",$tajD)) ;
 	}else{
 		return ("NA") ;
 	}
@@ -374,7 +362,7 @@ sub Fay_Wu_H{
 	$var_2 = $var_2*($theta_square)/(9*$n*(($n-1)**2));
 	my $var = $var_1 + $var_2 ;
 	if (sqrt($var) > 0){
-		return(($theta_pi - $theta_L)/(sqrt($var))) ;
+		return(sprintf("%.3f",($theta_pi - $theta_L)/(sqrt($var)))) ;
 	}else{
 		return("NA") ;
 	}	
