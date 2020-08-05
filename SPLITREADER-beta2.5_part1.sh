@@ -104,11 +104,12 @@ samtools view -Su $TmpDir/${in}${ext}.sam > $TmpDir/${in}${ext}.bam
 if [ -z "$pe" ]
   then
   # java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -jar $picardDir/SamToFastq.jar  INPUT=$TmpDir/${in}${ext}.bam FASTQ=$readsDir/$in.fastq TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
-  java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -cp $picardDir net.sf.picard.sam.SamToFastq  INPUT=$TmpDir/${in}${ext}.bam FASTQ=$readsDir/$in.fastq TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
-
+  #java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -cp $picardDir net.sf.picard.sam.SamToFastq  INPUT=$TmpDir/${in}${ext}.bam FASTQ=$readsDir/$in.fastq TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
+  java -jar -Xmx10g -Djava.io.tmpdir=$TmpDir/javatemp $picardDir SamToFastq  -INPUT $TmpDir/${in}${ext}.bam -FASTQ $readsDir/$in.fastq -TMP_DIR $TmpDir/javatemp  2>> $TmpDir/log.txt
     
   else
-  java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -cp $picardDir net.sf.picard.sam.SamToFastq INPUT=$TmpDir/${in}${ext}.bam FASTQ=$readsDir/$in.1 SECOND_END_FASTQ=$readsDir/$in.2 TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
+  #java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -cp $picardDir net.sf.picard.sam.SamToFastq INPUT=$TmpDir/${in}${ext}.bam FASTQ=$readsDir/$in.1 SECOND_END_FASTQ=$readsDir/$in.2 TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
+  java -jar -Xmx10g -Djava.io.tmpdir=$TmpDir/javatemp $picardDir SamToFastq -INPUT $TmpDir/${in}${ext}.bam -FASTQ $readsDir/$in.1 -SECOND_END_FASTQ $readsDir/$in.2 -TMP_DIR $TmpDir/javatemp  2>> $TmpDir/log.txt
    
   if [ -z "$LS" ]
     then
@@ -117,7 +118,9 @@ if [ -z "$pe" ]
     else
     echo "["$(date +"%y-%m-%d %T")"] Extracting discordant reads from ${in}${ext}: Insert size=$LS [User Defined]" | tee -a $TmpDir/log.txt
   fi
-  samtools view -hF 4 $InputDir/${in}${ext}.bam | awk -v l=$LS '(($4-$8)>(l*10) || ($8-$4)>(l*10) || $7!="=") || $1~/@HD/ || $1~/@SQ/ || $1~/@PG/' | java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -cp $picardDir net.sf.picard.sam.SamToFastq INPUT=/dev/stdin FASTQ=$readsDir/$in.1b SECOND_END_FASTQ=$readsDir/$in.2b TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
+  #samtools view -hF 4 $InputDir/${in}${ext}.bam | awk -v l=$LS '(($4-$8)>(l*10) || ($8-$4)>(l*10) || $7!="=") || $1~/@HD/ || $1~/@SQ/ || $1~/@PG/' | java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -cp $picardDir net.sf.picard.sam.SamToFastq INPUT=/dev/stdin FASTQ=$readsDir/$in.1b SECOND_END_FASTQ=$readsDir/$in.2b TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
+
+  samtools view -hF 4 $InputDir/${in}${ext}.bam | awk -v l=$LS '(($4-$8)>(l*10) || ($8-$4)>(l*10) || $7!="=") || $1~/@HD/ || $1~/@SQ/ || $1~/@PG/' | java -jar -Xmx10g -Djava.io.tmpdir=$TmpDir/javatemp $picardDir SamToFastq -INPUT /dev/stdin -FASTQ $readsDir/$in.1b -SECOND_END_FASTQ $readsDir/$in.2b -TMP_DIR $TmpDir/javatemp  2>> $TmpDir/log.txt
 
   cat $readsDir/$in.1 $readsDir/$in.1b > $readsDir/$in.1.fastq
   cat $readsDir/$in.2 $readsDir/$in.2b > $readsDir/$in.2.fastq

@@ -165,10 +165,14 @@ for ((l=1; $l<=$end; l=$l+1)); do
         # grab second in pair
         $samtoolsDir/samtools view -f 128 -u $InputDir/$in-TE.bam > $TmpResultsDir/$in-TE-disc-second.bam 2>> $TmpDir/log.txt
         
-        java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -cp $picardDir net.sf.picard.sam.FilterSamReads INPUT=$TmpResultsDir/$in-TE-disc-first.bam FILTER=includeReadList READ_LIST_FILE=$TmpResultsDir/reads.name.disc OUTPUT=$TmpResultsDir/$in-$TE-selected-disc-first.sam TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
+        #java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -cp $picardDir net.sf.picard.sam.FilterSamReads INPUT=$TmpResultsDir/$in-TE-disc-first.bam FILTER=includeReadList READ_LIST_FILE=$TmpResultsDir/reads.name.disc OUTPUT=$TmpResultsDir/$in-$TE-selected-disc-first.sam TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
 
-        java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -cp $picardDir net.sf.picard.sam.FilterSamReads INPUT=$TmpResultsDir/$in-TE-disc-second.bam FILTER=includeReadList READ_LIST_FILE=$TmpResultsDir/reads.name.disc OUTPUT=$TmpResultsDir/$in-$TE-selected-disc-second.sam TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
+        java -jar -Xmx10g -Djava.io.tmpdir=$TmpDir/javatemp $picardDir FilterSamReads -INPUT $TmpResultsDir/$in-TE-disc-first.bam -FILTER includeReadList -READ_LIST_FILE $TmpResultsDir/reads.name.disc -OUTPUT $TmpResultsDir/$in-$TE-selected-disc-first.sam -TMP_DIR $TmpDir/javatemp  2>> $TmpDir/log.txt
+
+        #java -Xmx10g -XX:+UseSerialGC -Djava.io.tmpdir=$TmpDir/javatemp -cp $picardDir net.sf.picard.sam.FilterSamReads INPUT=$TmpResultsDir/$in-TE-disc-second.bam FILTER=includeReadList READ_LIST_FILE=$TmpResultsDir/reads.name.disc OUTPUT=$TmpResultsDir/$in-$TE-selected-disc-second.sam TMP_DIR=$TmpDir/javatemp  2>> $TmpDir/log.txt
         
+        java -jar -Xmx10g -Djava.io.tmpdir=$TmpDir/javatemp $picardDir FilterSamReads -INPUT $TmpResultsDir/$in-TE-disc-second.bam -FILTER includeReadList -READ_LIST_FILE $TmpResultsDir/reads.name.disc -OUTPUT $TmpResultsDir/$in-$TE-selected-disc-second.sam -TMP_DIR $TmpDir/javatemp  2>> $TmpDir/log.txt
+
         cat $TmpResultsDir/$in-$TE-selected-disc-first.sam | awk '$1!~/^@/ {print $1"\t"$10"\t"$11}' | sort -u -k1,1 -k2,2 |  awk '{print "@"$1"|1\n"$2"\n+\n"$3}' > $TmpResultsDir/$in-$TE-disc.fastq 2>> $TmpDir/log.txt
         cat $TmpResultsDir/$in-$TE-selected-disc-second.sam | awk '$1!~/^@/ {print $1"\t"$10"\t"$11}' | sort -u -k1,1 -k2,2 | awk '{print "@"$1"|2\n"$2"\n+\n"$3}' >> $TmpResultsDir/$in-$TE-disc.fastq 2>> $TmpDir/log.txt
       fi
