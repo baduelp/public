@@ -8,6 +8,11 @@
 #                                           # 
 #############################################
 
+# # This script launches Process_BAMrc_splitreader.pl to calculate the negative coverage (RC) for all sites within $cohort-insertion-sites.[region].bed and stores the output for each $popname in $popname.$cohort-insertion.[region].rc
+# # If the read coverage was already calculated over some sites it removes them from the list to reduce computational time.
+# # The $cohort-insertion-sites.[region].bed input files can be generated directly from the combined list of putative insertion sites (all the $fam.$subsetname-insertions.filt.DP$depth.bed from the Filter_insertions_splitreader.pl)
+# # and reformated directly as a bed-file ($cohort-insertion-sites.0.bed) or shifted 100bp upstream ($cohort-insertion-sites.100up.bed) or 100bp downstream ($cohort-insertion-sites.100down.bed).
+
 ##Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
 in=$1 # basename of the bam file 
