@@ -10,6 +10,8 @@ use warnings ;
 #                                           # 
 #############################################
 
+# # This script calculates the negative coverage (NC) over putative insertion sites as well as 100bp upstream and 100bp downstream
+
 ##Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
 my $subsetname = $ARGV[0] ; # name of cohort
