@@ -42,14 +42,14 @@ print STDOUT "number of individuals: ",$#pops_to_analyze+1,"\n";
 my $ind_thresh=floor($#pops_to_analyze/10); # requires at least 10% of individuals covered
 print STDOUT "number of individuals covered required by position: $ind_thresh\n";
 
-
-
 print STDOUT "importing positions\t";
 my %masked_pos ;
+
 open IN, "<$project_dir/$subsetname-insertions.$filtname.DP$depth.bed" ;
 while(<IN>){
 	chomp $_ ;
 	next if /^scaff/; # remove header line
+  
 	# Buffer array with values of every line
 	my @line = split(/\t/, $_) ; 
 	my $scaff = $line[0] ;
