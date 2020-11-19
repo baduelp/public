@@ -14,6 +14,8 @@ STDOUT->autoflush(1);
 #                                           # 
 #############################################
 
+# # This script filters putative insertion sites based on the negative coverage calculated on the insertion site as well as 100bp up and 100bp down by BAM-readcount_wrapper.sh.
+
 ##Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
 my $subsetname = $ARGV[0] ;# name of cohort
@@ -53,6 +55,7 @@ my %masked_pos ;
 open IN, "<$project_dir/BEDfiles/SPLITREADER/$subsetname-insertions.$filtname.DP$depth.bed" ;
 while(<IN>){
 	chomp $_ ;
+	next if /^scaff/; # remove header line
 	# Buffer array with values of every line
 	my @line = split(/\t/, $_) ; 
 	my $scaff = $line[0] ;
