@@ -8,6 +8,11 @@
 #                                           # 
 #############################################
 
+# # SPLITREADER part 2 calls putative insertion sites from alignments of split and discordant reads to the TE library from SPLITREADER part1 
+# # The output file ($in-insertion-sites.bed) is in the following forma:
+# # Chromosome start stop TEname putative_TSD_length nb_of_split_reads_supporting_insertion_left nb_of_split_right nb_of_discordant_left nb_of_discordant_right
+# # There are 2 extra columns when there's no split reads supporting the TSD (NA in column 5) and thus the insertion is based on discordant reads whose leftmost and rightmost boundaries are in the extra columns
+
 ##Questions or comments to quadrana(ar)bio.ens.psl.eu
 
 in=$1 # bam file name
@@ -24,11 +29,11 @@ LENGTH=100
 
 
 #############################################################
-#IN THE FOLLOWING VARIABLE YOU CAN PROVIDE THE MINIMUM NUMBER OF SPLIT-READS IN EACH EXTRIMITY OF THE TE. By default is 5 reads
+#IN THE FOLLOWING VARIABLE YOU CAN PROVIDE THE MINIMUM NUMBER OF SPLIT-READS IN EACH EXTRIMITY OF THE TE. By default is 2 reads
 READS=2
 maxcov=100 # maximum coverage
 LS=500 # library size
-pe=TRUE
+pe=TRUE # paired-end
 #### If not specified, the program estimate them. To this end, the program calculates the minimum number of reads as 3 standard deviation under the mean whole genome coverage
 ####This value should be at least 3, if not, it is forced to be 3
  
@@ -42,7 +47,7 @@ CORES=2
 
 ########################### edit the following paths !!! ####################
 
-InputDir=/$workdir/$cohort/${in}/part1 #TE-sam from part1 
+InputDir=/$workdir/$cohort/${in}/part1 #TE-bam from part1 
 
 OutputDir=/$workdir/$cohort/${in}/part2
 if [ -e $OutputDir/log.txt ]
@@ -51,7 +56,8 @@ then
 fi
 if [ -e $OutputDir/$in-insertion-sites.bed ]
 then
-  rm $OutputDir/$in-insertion-sites.bed
+  rm $OutputDir/$in
+  
 fi
 
 #path to list of TEs to analyze (TE-information-all.txt)

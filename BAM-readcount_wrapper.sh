@@ -8,19 +8,24 @@
 #                                           # 
 #############################################
 
+# # This script calculate the negative coverage (RC) for all sites within $cohort-insertion-sites.[region].bed in the whole-genome alignment bam file ($bamdir/${in}$bamext.bam) and stores the minimum over each interval processed by 
+# # Process_BAMrc_splitreader.pl for each $popname in output file: $popname.$cohort-insertion.[region].rc
+# # If the read coverage was already calculated over a subset of the sites in $cohort-insertion-sites.[region].bed it does not re-analyze them to reduce computational time.
+# # The $cohort-insertion-sites.[region].bed input files can be generated directly from the combined list of putative insertion sites (all the $fam.$subsetname-insertions.filt.DP$depth.bed from the Filter_insertions_splitreader.pl)
+# # and reformated directly as a bed-file ($cohort-insertion-sites.0.bed) or shifted 100bp upstream (-100 on both start and stop columns in $cohort-insertion-sites.100up.bed) or 100bp downstream ($cohort-insertion-sites.100down.bed).
+
 ##Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
 in=$1 # basename of the bam file 
-TE_fam=$2 # HERE BAMrc
-bamdir=$3 # path to bam file
-bamext=$4 # bam file extension 
-popname=$5 # genome name (when different from bam file name)
-depth=$6 # number of reads required to call an insertion on 1st pass
-cohort=$7 # name of cohort
-OutputDir=$8 # path/to/output
-project_dir=$9 # path/to/files
-GenomeIndexDir=${10} # path/to/genome/reference
-genomefile=${11} # name of reference genome file
+bamdir=$2 # path to bam file
+bamext=$3 # bam file extension 
+popname=$4 # genome name (when different from bam file name)
+depth=$5 # number of reads required to call an insertion on 1st pass
+cohort=$6 # name of cohort
+OutputDir=$7 # path/to/output
+project_dir=$8 # path/to/files
+GenomeIndexDir=$9 # path/to/genome/reference
+genomefile=${10} # name of reference genome file
 
 updownbool=1 ## calculates coverage 100bp up and down of insertion sites
 

@@ -14,16 +14,26 @@ STDOUT->autoflush(1);
 #                                           # 
 #############################################
 
-##Questions or comments to pbaduel(ar)bio.ens.psl.eu
+# # This script filters putative insertion sites based on the minimum negative coverage observed within each insertion site as well as 100bp up and 100bp downstream by BAM-readcount_wrapper.sh.
+# # The BAMrc output files ($pop.$subsetname-insertion.[0/100up/100down].rc) are stored for each $pop in $workspace_dir/$subsetname/$pop/BAMrc/. 
+# # If another directory architecture is used the paths on ll. 174, 189, and 204 need to be changed accordingly.
+# # For further analysis four output files are generated :
+# # $project_dir/$subsetname-insertions.$filtname.NC.DP$depth.bed contains all the NC information but is not filtered for the ratio of negative coverage (ratioNCfilt): for each putative insertion sites it shows for each sample the coverage supporting the non-reference insertion / the coverage supporting the reference absence / the coverage 100bp up / the coverage100bp down. 
+# # $project_dir/$subsetname-insertions.ratioNC$filtname.bool.DP$depth.bed filters the putative insertions based on the ratioNCfilt with a 1 for samples where insertions have passed the filter, a 0 where they have not and the reference coverage is sufficient (>$DPrefmin reads) to be confident that the insertion is indeed absent, and - for the samples where the reference coverage is not sufficient to confirm the absence.
+# # $project_dir/$subsetname-insertions.ratioNC$filtname.DP$depth.bed gives the coverage supporting the ratioNCfilt insertions
+# # $project_dir/$subsetname-insertions.ratioNC$filtname.NConly.DP$depth.bed gives the reference coverage over ratioNCfilt insertion sites
+## Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
 my $subsetname = $ARGV[0] ;# name of cohort
-my $depth = $ARGV[1] ; # number of reads (split+discordant) required to call an insertion on 1st pass
-my $project_dir = $ARGV[2]; # path to working directory
+my $depth = $ARGV[1] ; # number of reads (split+discordant) used to call an insertion in Filter_insertion_splitreader.pl
+my $project_dir = $ARGV[2]; # path to working directory where $subsetname-insertions.$filtname.DP$depth.bed is located
 my $workspace_dir = $ARGV[3]; # path to input files by sample
 my $filtname = $ARGV[4] ; # name of first pass filter (positive coverage) 
 
 my @pops_to_analyze = @ARGV[5..$#ARGV]; # array of all samples in cohort
 
+my $DPrefmin=5; # minimum negative coverage over insertion sites required to be confident that an insertion is indeed absent
+my $DPrefmax=100; # maximum negative coverage over insertion sites to remove regions with aberrant sequencing depth (to be adjusted depending on library depth) 
 
 print STDOUT "Calling Ref DP for $subsetname \n";
 
@@ -32,27 +42,14 @@ print STDOUT "number of individuals: ",$#pops_to_analyze+1,"\n";
 my $ind_thresh=floor($#pops_to_analyze/10); # requires at least 10% of individuals covered
 print STDOUT "number of individuals covered required by position: $ind_thresh\n";
 
-my %fastq_names;
-open IN, "<$project_dir/BAMs/$subsetname.fastq_names.txt" ;
-while(<IN>){
-	chomp $_ ;
-	my @line = split(/\t/, $_) ; 
-	if($#line>0){
-	$line[0]=~ s/\s+$//;
-	$line[1]=~ s/\s+$//;
-	$line[1]=~ s/^\s+//;
-	$fastq_names{$line[0]}=$line[1];}
-
-}
-close IN ; 
-
-
-
 print STDOUT "importing positions\t";
 my %masked_pos ;
-open IN, "<$project_dir/BEDfiles/SPLITREADER/$subsetname-insertions.$filtname.DP$depth.bed" ;
+
+open IN, "<$project_dir/$subsetname-insertions.$filtname.DP$depth.bed" ;
 while(<IN>){
 	chomp $_ ;
+	next if /^scaff/; # remove header line
+  
 	# Buffer array with values of every line
 	my @line = split(/\t/, $_) ; 
 	my $scaff = $line[0] ;
@@ -67,7 +64,7 @@ print STDOUT "done\n";
 
 my %TE_cov ;
 my %ind_pop ;
-open IN, "<$project_dir/BEDfiles/SPLITREADER/$subsetname-insertions.$filtname.DP$depth.bed" ;
+open IN, "<$project_dir/$subsetname-insertions.$filtname.DP$depth.bed" ;
 
 
 print STDOUT "finding sample index\t";
@@ -176,7 +173,7 @@ print STDOUT "importing NC cov\t";
 my %ref_cov ;
 foreach my  $pop (sort keys %ind_pop){
 	print STDOUT "$pop\t";
-	open IN2, "<$workspace_dir/$subsetname/$fastq_names{$pop}/BAMrc/$pop.$subsetname-insertion.0.rc" ;
+	open IN2, "<$workspace_dir/$subsetname/$pop/BAMrc/$pop.$subsetname-insertion.0.rc" ;
 	while(<IN2>){
 		chomp $_ ;
 		my @line = split(/\t/, $_) ;
@@ -191,7 +188,7 @@ print STDOUT "importing NC cov 100up\t";
 my %up_cov ;
 foreach my  $pop (sort keys %ind_pop){
 	print STDOUT "$pop\t";
-	open IN3, "<$workspace_dir/$subsetname/$fastq_names{$pop}/BAMrc/$pop.$subsetname-insertion.100up.rc" ;
+	open IN3, "<$workspace_dir/$subsetname/$pop/BAMrc/$pop.$subsetname-insertion.100up.rc" ;
 	while(<IN3>){
 		chomp $_ ;
 		my @line = split(/\t/, $_) ;
@@ -206,7 +203,7 @@ print STDOUT "importing NC cov 100down\t";
 my %down_cov ;
 foreach my  $pop (sort keys %ind_pop){
 	print STDOUT "$pop\t";
-	open IN4, "<$workspace_dir/$subsetname/$fastq_names{$pop}/BAMrc/$pop.$subsetname-insertion.100down.rc" ;
+	open IN4, "<$workspace_dir/$subsetname/$pop/BAMrc/$pop.$subsetname-insertion.100down.rc" ;
 	while(<IN4>){
 		chomp $_ ;
 		my @line = split(/\t/, $_) ;
@@ -217,10 +214,10 @@ foreach my  $pop (sort keys %ind_pop){
 close IN4;
 print STDOUT "done\n";
 
-open OUT, ">$project_dir/BEDfiles/SPLITREADER/$subsetname-insertions.$filtname.NC.DP$depth.bed" ;
-open OUT3, ">$project_dir/BEDfiles/SPLITREADER/$subsetname-insertions.ratioNC$filtname.NConly.DP$depth.bed" ;
-open OUT4, ">$project_dir/BEDfiles/SPLITREADER/$subsetname-insertions.ratioNC$filtname.DP$depth.bed" ;
-open OUT5, ">$project_dir/BEDfiles/SPLITREADER/$subsetname-insertions.ratioNC$filtname.bool.DP$depth.bed" ;
+open OUT, ">$project_dir/$subsetname-insertions.$filtname.NC.DP$depth.bed" ;
+open OUT3, ">$project_dir/$subsetname-insertions.ratioNC$filtname.NConly.DP$depth.bed" ;
+open OUT4, ">$project_dir/$subsetname-insertions.ratioNC$filtname.DP$depth.bed" ;
+open OUT5, ">$project_dir/$subsetname-insertions.ratioNC$filtname.bool.DP$depth.bed" ;
 
 print OUT "scaff \t start \t end \t TE_name \t popNB(NBsplit) \t" ;
 print OUT3 "scaff \t start \t end \t TE_name \t popNB(NBsplit) \t" ;
@@ -273,14 +270,14 @@ foreach my $scf (sort keys %TE_cov){
 									else{
 										$site_filterNO_bool+=1;
 									}
-									if($TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPtot'}{$pop}<100){
+									if($TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPtot'}{$pop}<$DPrefmax){
 										$NC_filter_nb+=1;
 									}
 
 								}
 								else{
 									# negative call
-									if($TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPtot'}{$pop}<100 && $TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPref'}{$pop}>5){
+									if($TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPtot'}{$pop}<$DPrefmax && $TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPref'}{$pop}>=$DPrefmin){
 										$NC_filter_nb+=1;
 									}
 									}
@@ -308,7 +305,7 @@ foreach my $scf (sort keys %TE_cov){
 									print OUT5 "1\t" ;
 								}
 								else{
-									if( $TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPref'}{$pop} >= 5 ){ #NC covered non-carriers
+									if( $TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPref'}{$pop} >= $DPrefmin ){ #NC covered non-carriers
 									print OUT5 "0\t" ;
 									}
 									else{

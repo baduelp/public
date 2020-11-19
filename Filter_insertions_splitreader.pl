@@ -12,6 +12,12 @@ use warnings ;
 
 ##Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
+# # README
+# # This scripts refine and filters putative insertion sites from SPLITREADER part2 based on the positive coverage supporting the insertions (split / discordant reads)
+# # For each TE family, it takes as input the intervals where putative presence variant calls overlap (sorted: $fam.$subsetname-intersect.sort.bed then merged: $fam.$subsetname-intersect.mrg.bed)
+# # The output ($fam.$subsetname-insertions.filt.DP$depth.bed) is in the following format: scaff start end TE_name nb_of_genomes_overlapping(Combined_Nb_of_split_start/Nb_split_stop) followed by the number of reads (split+disc) supporting the insertion in each carrier
+# # If some genomes did not pass the first SPLITREADER steps they can be removed based on the $subsetname.missing_inds.txt list. If all genomes were correctly processed create an empty file
+
 ## define subroutines
 sub max {
     my ($max, @vars) = @_;
@@ -85,28 +91,18 @@ print STDERR "Filtering Insertions for ".$subsetname." at DP ".$depth."\n";
 
 print STDOUT "number of individuals $#all_pops\n";
 
-# find missing genomes because of BAM issues 
+
 my %missing_inds;
 foreach my $ind (0..$#all_pops){
 	$missing_inds{$all_pops[$ind]}=0;
 }
-open IN, "<$project_dir/BAMs/$subsetname.missing_bams.txt" ;
+
+open IN, "<$project_dir/BAMs/$subsetname.missing_inds.txt" ;
 while(<IN>){
 	chomp $_ ;
 	my @line = split(/\t/, $_) ; 
 	if($#line>0){
 	$line[0] =~ s/\s+$//;
-	$missing_inds{$line[0]}=1;}
-}
-close IN ; 
-print ".";
-
-open IN, "<$project_dir/BAMs/$subsetname.truncated_bams.txt" ;
-while(<IN>){
-	chomp $_ ;
-	my @line = split(/\t/, $_) ; 
-	if($#line>0){
-	$line[0]=~ s/\s+$//;
 	$missing_inds{$line[0]}=1;}
 }
 close IN ; 
@@ -474,7 +470,7 @@ my $bedfile = "$out_dir/$fam.$pop-insertion-sites.bed";
 }
 
 
-open OUT, ">$out_dir/$fam.$subsetname-insertions.filt3.DP$depth.bed" ;
+open OUT, ">$out_dir/$fam.$subsetname-insertions.filt.DP$depth.bed" ;
 
 print OUT "scaff \t start \t end \t TE_name \t overlap(NBsplit_start/NBsplit_stop) \t" ;
 foreach my $ind (0..$#pops_to_analyze){

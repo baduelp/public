@@ -10,6 +10,8 @@ use warnings ;
 #                                           # 
 #############################################
 
+# # This script calculates the minimum negative coverage (NC) found in $pop.$subsetname-insertion.tmp.$region.rc over all intervals of input file $subsetname-insertion-sites.$region.bed. 
+
 ##Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
 my $subsetname = $ARGV[0] ; # name of cohort
