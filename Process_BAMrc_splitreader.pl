@@ -10,7 +10,8 @@ use warnings ;
 #                                           # 
 #############################################
 
-# # This script calculates the negative coverage (NC) over putative insertion sites as well as 100bp upstream and 100bp downstream
+# # This script calculates the negative coverage (NC) over region input file $subsetname-insertion-sites.$region.bed. 
+# # These input files can be generated directly from the list of putative insertion sites from the Filter_insertions_splitreader.pl as well as 100bp upstream and 100bp downstream
 
 ##Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
