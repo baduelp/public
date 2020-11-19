@@ -11,8 +11,6 @@ use warnings ;
 #############################################
 
 # # This script calculates the negative coverage (NC) over region input file $subsetname-insertion-sites.$region.bed. 
-# # These input files can be generated directly from the combined list of putative insertion sites (all the $fam.$subsetname-insertions.filt.DP$depth.bed from the Filter_insertions_splitreader.pl)
-# # and reformated directly as a bed-file ($subsetname-insertion-sites.0.bed) or shifted 100bp upstream ($subsetname-insertion-sites.100up.bed) or 100bp downstream ($subsetname-insertion-sites.100down.bed).
 
 ##Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
