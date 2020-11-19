@@ -353,7 +353,7 @@ for ((l=1; $l<=$end; l=$l+1)); do
       awk -v l=$LS '{print $1"\t"$2"\t"$3+l"\t"$4}' $TmpResultsDir/$in-$TE-disc-up.bed | $bedtoolsdir/intersectBed -a $TmpResultsDir/$in-insertion-sites.1 -b stdin -wa -wb | awk '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$11}' > $TmpResultsDir/$in-insertion-sites.2  2>> $TmpDir/log.txt
       awk -v l=$LS '{print $1"\t"$2"\t"$3+l"\t"$4}' $TmpResultsDir/$in-$TE-disc-up.bed | $bedtoolsdir/intersectBed -a $TmpResultsDir/$in-insertion-sites.1 -b stdin -v | awk '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t""0"}' >> $TmpResultsDir/$in-insertion-sites.2  2>> $TmpDir/log.txt
       
-      awk -v l=$LS ' $2-l>0 {print $1"\t"$2-l"\t"$3"\t"$4}' $TmpResultsDir/$in-$TE-disc-down.bed | $bedtoolsdir/intersectBed -a $TmpResultsDir/$in-insertion-sites.2 -b stdin -wa -wb | awk '($6+$7)>=r {print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$12}' >> $OutputDir/$in-insertion-sites.bed  2>> $TmpDir/log.txt
+      awk -v l=$LS ' $2-l>0 {print $1"\t"$2-l"\t"$3"\t"$4}' $TmpResultsDir/$in-$TE-disc-down.bed | $bedtoolsdir/intersectBed -a $TmpResultsDir/$in-insertion-sites.2 -b stdin -wa -wb | awk '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$12}' >> $OutputDir/$in-insertion-sites.bed  2>> $TmpDir/log.txt
       
       awk -v l=$LS '$2-l>0 {print $1"\t"$2-l"\t"$3"\t"$4}' $TmpResultsDir/$in-$TE-disc-down.bed | $bedtoolsdir/intersectBed -a $TmpResultsDir/$in-insertion-sites.2 -b stdin -v | awk '{print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t""0"}' >> $OutputDir/$in-insertion-sites.bed  2>> $TmpDir/log.txt
       
