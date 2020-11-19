@@ -11,6 +11,7 @@
 # # SPLITREADER part 2 calls putative insertion sites from alignments of split and discordant reads to the TE library from SPLITREADER part1 
 # # The output file ($in-insertion-sites.bed) is in the following forma:
 # # Chromosome start stop TEname putative_TSD_length nb_of_split_reads_supporting_insertion_left nb_of_split_right nb_of_discordant_left nb_of_discordant_right
+# # There are 2 extra columns when there's no split reads supporting the TSD (NA in column 5) and thus the insertion is based on discordant reads whose leftmost and rightmost boundaries are in the extra columns
 
 ##Questions or comments to quadrana(ar)bio.ens.psl.eu
 
