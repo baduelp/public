@@ -16,17 +16,24 @@ STDOUT->autoflush(1);
 
 # # This script filters putative insertion sites based on the minimum negative coverage observed within each insertion site as well as 100bp up and 100bp downstream by BAM-readcount_wrapper.sh.
 # # The BAMrc output files ($pop.$subsetname-insertion.[0/100up/100down].rc) are stored for each $pop in $workspace_dir/$subsetname/$pop/BAMrc/. 
-# # If another directory architecture is used the paths on ll. 169, 184, and 199 need to be changed accordingly.
+# # If another directory architecture is used the paths on ll. 174, 189, and 204 need to be changed accordingly.
+# # For further analysis four output files are generated :
+# # $project_dir/$subsetname-insertions.$filtname.NC.DP$depth.bed contains all the NC information but is not filtered for the ratio of negative coverage (ratioNCfilt): for each putative insertion sites it shows for each sample the coverage supporting the non-reference insertion / the coverage supporting the reference absence / the coverage 100bp up / the coverage100bp down. 
+# # $project_dir/$subsetname-insertions.ratioNC$filtname.bool.DP$depth.bed filters the putative insertions based on the ratioNCfilt with a 1 for samples where insertions have passed the filter, a 0 where they have not and the reference coverage is sufficient (>$DPrefmin reads) to be confident that the insertion is indeed absent, and - for the samples where the reference coverage is not sufficient to confirm the absence.
+# # $project_dir/$subsetname-insertions.ratioNC$filtname.DP$depth.bed gives the coverage supporting the ratioNCfilt insertions
+# # $project_dir/$subsetname-insertions.ratioNC$filtname.NConly.DP$depth.bed gives the reference coverage over ratioNCfilt insertion sites
 ## Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
 my $subsetname = $ARGV[0] ;# name of cohort
-my $depth = $ARGV[1] ; # number of reads (split+discordant) required to call an insertion on 1st pass
+my $depth = $ARGV[1] ; # number of reads (split+discordant) used to call an insertion in Filter_insertion_splitreader.pl
 my $project_dir = $ARGV[2]; # path to working directory where $subsetname-insertions.$filtname.DP$depth.bed is located
 my $workspace_dir = $ARGV[3]; # path to input files by sample
 my $filtname = $ARGV[4] ; # name of first pass filter (positive coverage) 
 
 my @pops_to_analyze = @ARGV[5..$#ARGV]; # array of all samples in cohort
 
+my $DPrefmin=5; # minimum negative coverage over insertion sites required to be confident that an insertion is indeed absent
+my $DPrefmax=100; # maximum negative coverage over insertion sites to remove regions with aberrant sequencing depth (to be adjusted depending on library depth) 
 
 print STDOUT "Calling Ref DP for $subsetname \n";
 
@@ -263,14 +270,14 @@ foreach my $scf (sort keys %TE_cov){
 									else{
 										$site_filterNO_bool+=1;
 									}
-									if($TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPtot'}{$pop}<100){
+									if($TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPtot'}{$pop}<$DPrefmax){
 										$NC_filter_nb+=1;
 									}
 
 								}
 								else{
 									# negative call
-									if($TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPtot'}{$pop}<100 && $TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPref'}{$pop}>5){
+									if($TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPtot'}{$pop}<$DPrefmax && $TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPref'}{$pop}>=$DPrefmin){
 										$NC_filter_nb+=1;
 									}
 									}
@@ -298,7 +305,7 @@ foreach my $scf (sort keys %TE_cov){
 									print OUT5 "1\t" ;
 								}
 								else{
-									if( $TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPref'}{$pop} >= 5 ){ #NC covered non-carriers
+									if( $TE_cov{$scf}{$posstart}{$posstop}{$TE}{'DPref'}{$pop} >= $DPrefmin ){ #NC covered non-carriers
 									print OUT5 "0\t" ;
 									}
 									else{
