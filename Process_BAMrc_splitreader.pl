@@ -10,7 +10,7 @@ use warnings ;
 #                                           # 
 #############################################
 
-# # This script calculates the negative coverage (NC) over region input file $subsetname-insertion-sites.$region.bed. 
+# # This script calculates the minimum negative coverage (NC) found in $pop.$subsetname-insertion.tmp.$region.rc over all intervals of input file $subsetname-insertion-sites.$region.bed. 
 
 ##Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
