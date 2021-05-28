@@ -1,4 +1,4 @@
-function [t_highscore]=plot_AF_PCA(AFSnorm, popName,popReInd,colorInd, LOI,fig_title, markerInd,markers, samplename, dir, printbool)
+function [highscore, score, coeff, explained]=plot_AF_PCA(AFSnorm, popName,popReInd,colorInd, LOI,fig_title, markerInd,markers, samplename, dir, printbool)
 
 % example
 % popName={'POP1' 'POP2' 'POP3' 'POP4' 'POP5' 'POP6' 'POP7' 'POP8' 'POP9' 'POP10' 'POP11' 'POP12' 'POP13' 'POP14' 'POP15' 'POP16' 'POP17' 'POP18'};
@@ -47,7 +47,7 @@ axis square
 PCind=[1 2];
 for pc=1:2
     [~, I]=sortrows(score(:,PCind(pc)));
-    t_highscore(1:20,PCind(pc))=I(end-19:end);
+    highscore(1:20,PCind(pc))=I(end-19:end);
 end
 h=[];
 for i=1:length(LOI)
