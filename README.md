@@ -1,5 +1,5 @@
 # public repository
-For more detailed descriptions see [pbaduel.com/code](pbaduel.com/code). 
+For more detailed descriptions see [pbaduel.com/code](http://pbaduel.com/code). 
 
 ## MATLAB genomic toolbox
 Custom MATLAB functions for genomics. 
