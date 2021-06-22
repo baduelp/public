@@ -202,10 +202,6 @@ echo -e "### Checking requirements  ###\n"
 if [ $run_part -eq 1 ]
 then
     echo -e "###    Running SPLITREADER pipeline    ###\n"
-
-    echo "executable = $script_dir/SPLITREADER-beta1.5_part1.sh" > $workspace_dir/tmp.SR1.sub
-    echo "executable = $script_dir/SPLITREADER-beta1.5_part2.sh" > $workspace_dir/tmp.SR2.sub
-    echo "executable = $script_dir/SPLITREADER-sort.sh" > $workspace_dir/tmp.SRsort.sub
     
     if [ ! -s $workspace_dir/BAMs/$cohortname.cov ]
     then
