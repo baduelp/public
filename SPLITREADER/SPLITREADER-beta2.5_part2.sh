@@ -132,8 +132,6 @@ for ((l=1; $l<=$end; l=$l+1)); do
     TE=`sed -n "${l}p" $listDir/TE-information-all.txt | awk '{print $1}'`
    TSD=`sed -n "${l}p" $listDir/TE-information-all.txt | awk '{print $2}'`
    
-   #TE=ATCOPIA93
-   #TSD=5
    echo -e "\n"
    echo "["$(date +"%y-%m-%d %T")"] ##### RUNNING SPLIT-READ ANALYSIS ON $TE ######"  | tee -a $TmpDir/log.txt  
    echo ""
