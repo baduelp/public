@@ -18,6 +18,26 @@ use warnings ;
 # # The output ($fam.$subsetname-insertions.filt.DP$depth.bed) is in the following format: scaff start end TE_name nb_of_genomes_overlapping(Combined_Nb_of_split_start/Nb_split_stop) followed by the number of reads (split+disc) supporting the insertion in each carrier
 # # If some genomes did not pass the first SPLITREADER steps they can be removed based on the $subsetname.missing_inds.txt list. If all genomes were correctly processed create an empty file
 
+my $subsetname = $ARGV[0] ; # name of cohort
+my $depth = $ARGV[1] ; # number of reads (split+discordant) required to call an insertion on 1st pass
+my $project_dir = $ARGV[2]; # path to working directory
+my $fam = $ARGV[3]; # TE family 
+my $out_dir = $ARGV[4]; # path to output directory by TE family
+my $TSDthresh = $ARGV[5]; # threshold above witch presence variants are rejected based on expected TSD length of TE family
+my $noTSDthresh = $ARGV[6]; # threshold above witch presence variants are rejected based when no TSD defined for TE family
+
+my @all_pops = @ARGV[7..$#ARGV]; # list of all the genomes analysed in the cohort 
+
+# retrieve TSD length for all TE families in TE-information-all.txt (first column is list of TE families and second column is corresponding TSD length)
+my %TSDlength;
+open IN, "<$project_dir/TE_sequence/TE-information-all.txt" ;
+while(<IN>){
+	chomp $_ ;
+	my @line = split(/\t/, $_) ; 
+	$TSDlength{$line[0]}=$line[1];
+}
+close IN ; 
+
 ## define subroutines
 sub max {
     my ($max, @vars) = @_;
@@ -62,28 +82,6 @@ sub binary {
 		return $right;
 		}
 }
-
-
-my $subsetname = $ARGV[0] ; # name of cohort
-my $depth = $ARGV[1] ; # number of reads (split+discordant) required to call an insertion on 1st pass
-my $project_dir = $ARGV[2]; # path to working directory
-my $fam = $ARGV[3]; # TE family 
-my $out_dir = $ARGV[4]; # path to output directory by TE family
-my $TSDthresh = $ARGV[5]; # threshold above witch presence variants are rejected based on expected TSD length of TE family
-my $noTSDthresh = $ARGV[6]; # threshold above witch presence variants are rejected based when no TSD defined for TE family
-
-my @all_pops = @ARGV[7..$#ARGV]; # list of all the genomes analysed in the cohort 
-
-
-# retrieve TSD length for all TE families
-my %TSDlength;
-open IN, "<$project_dir/TE_sequence/TE-information-all.txt" ;
-while(<IN>){
-	chomp $_ ;
-	my @line = split(/\t/, $_) ; 
-	$TSDlength{$line[0]}=$line[1];
-}
-close IN ; 
 
 
 print STDERR "Filtering Insertions for ".$subsetname." at DP ".$depth."\n";
