@@ -14,7 +14,7 @@ STDOUT->autoflush(1);
 #                                           # 
 #############################################
 
-# # This script filters putative insertion sites based on the minimum negative coverage observed within each insertion site as well as 100bp up and 100bp downstream by BAM-readcount_wrapper.sh.
+# # This script filters putative insertion sites based on the minimum negative coverage (NC) observed within each insertion site as well as 100bp up and 100bp downstream by BAM-readcount_wrapper.sh.
 # # The BAMrc output files ($pop.$subsetname-insertion.[0/100up/100down].rc) are stored for each $pop in $workspace_dir/$subsetname/$pop/BAMrc/. 
 # # If another directory architecture is used the paths on ll. 174, 189, and 204 need to be changed accordingly.
 # # For further analysis four output files are generated :
@@ -22,6 +22,7 @@ STDOUT->autoflush(1);
 # # $project_dir/$subsetname-insertions.ratioNC$filtname.bool.DP$depth.bed filters the putative insertions based on the ratioNCfilt with a 1 for samples where insertions have passed the filter, a 0 where they have not and the reference coverage is sufficient (>$DPrefmin reads) to be confident that the insertion is indeed absent, and - for the samples where the reference coverage is not sufficient to confirm the absence.
 # # $project_dir/$subsetname-insertions.ratioNC$filtname.DP$depth.bed gives the coverage supporting the ratioNCfilt insertions
 # # $project_dir/$subsetname-insertions.ratioNC$filtname.NConly.DP$depth.bed gives the reference coverage over ratioNCfilt insertion sites
+# # all 4 output files start by 5 columns indicating the location (column 1, 2, 3: chr, start, stop) of the putative TE insertion, the name of the TE it is associated with (column 4: TEname), and the number of samples where it is detected as well as the total nb of split-reads supporting the insertion in these samples (column 5: popNB(NBsplit))
 ## Questions or comments to pbaduel(ar)bio.ens.psl.eu
 
 my $subsetname = $ARGV[0] ;# name of cohort
