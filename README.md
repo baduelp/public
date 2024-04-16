@@ -9,7 +9,8 @@ This folder contains the scripts to detect non-reference transposable element in
 Accessory files and wrapper scripts are also available in [/thaliana](/SPLITREADER/thaliana) to run the SPLITREADER pipeline on the _A. thaliana_ genome. <br/>
 
 ## [/SPLITREADER_V1](/SPLITREADER_V1)
-This folder contains a snakemake version of the SPLITREADER pipeline for enhanced portability and ease of use. 
+This folder contains a snakemake version of the SPLITREADER pipeline produced by [@aurelpetit] (https://github.com/aurelpetit) for enhanced portability and ease of use. 
+
 ![workflow](SPLITREADER_v1/dag_workflow.svg)
 ### Clone the SPLITREADER branch
 
