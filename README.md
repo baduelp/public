@@ -13,7 +13,7 @@ Accessory files and wrapper scripts are also available in [/thaliana](/SPLITREAD
 
 ### [SPLITREADER_v1.2](/SPLITREADER/SPLITREADER_v1.2)
 
-This folder contains a snakemake version of the SPLITREADER pipeline produced by [@aurelpetit](https://github.com/aurelpetit) for enhanced portability and ease of use. 
+This folder contains a snakemake version of the SPLITREADER pipeline produced by [@aurelpetit](https://github.com/aurelpetit) for easier portability and management of dependencies. 
 
 ## For citation
 
