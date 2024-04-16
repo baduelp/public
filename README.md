@@ -14,7 +14,7 @@ This folder contains a snakemake version of the SPLITREADER pipeline produced by
 
 ### Clone the SPLITREADER branch
 
-git clone https://github.com/baduelp/public/SPLITREADER_V1.git
+git clone https://github.com/baduelp/public/SPLITREADER.git
 
 ### Installation Conda
 
