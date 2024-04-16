@@ -10,8 +10,8 @@ Accessory files and wrapper scripts are also available in [/thaliana](/SPLITREAD
 
 ## [/SPLITREADER_V1](/SPLITREADER_V1)
 This folder contains a snakemake version of the SPLITREADER pipeline produced by [@aurelpetit](https://github.com/aurelpetit) for enhanced portability and ease of use. 
-
 ![workflow](SPLITREADER_v1/dag_workflow.svg)
+
 ### Clone the SPLITREADER branch
 
 git clone https://github.com/baduelp/public/SPLITREADER_V1.git
@@ -59,7 +59,7 @@ You need the following files to run the SPLITREADER pipeline :
     snakemake --snakefile SPLITREADER.snk --cores X
     ```
 
-## References
+## For citation
 
 **Baduel P**, Quadrana L, Colot V. Efficient detection of transposable element insertion polymorphisms between genomes using short-read sequencing data. Plant Transposable Elements, Methods in Molecular Biology, [10.1007/978-1-0716-1134-0_15](https://doi.org/10.1007/978-1-0716-1134-0_15), 04/2021.
 
