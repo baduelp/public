@@ -1,5 +1,4 @@
 # SPLITREADER 
----
 
 This public repository contains the scripts for running the SPLITREADER pipeline initially developped by [Quadrana et al. eLife 2016](https://doi.org/10.7554/eLife.15716) and further improved by [Baduel et al. MMB 2021](https://doi.org/10.1007/978-1-0716-1134-0_15). 
 
