@@ -1,4 +1,4 @@
-## SPLITREADER_V1.2
+## SPLITREADER_v1.2
 
 ### Clone the SPLITREADER branch
 
