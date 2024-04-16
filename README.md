@@ -1,6 +1,6 @@
 # public pipelines 
 
-If you have any question or comment please reach me through the channels listed [there](http://pbaduel.com/about). 
+_If you have any question or comment please reach me through the channels listed [there](http://pbaduel.com/about)._
 
 ## [/SPLITREADER](/SPLITREADER) 
 
@@ -14,7 +14,7 @@ Accessory files and wrapper scripts are also available in [/thaliana](/SPLITREAD
 ### [/SPLITREADER/SPLITREADER_V1.2](/SPLITREADER_V1.2)
 
 This folder contains a snakemake version of the SPLITREADER pipeline produced by [@aurelpetit](https://github.com/aurelpetit) for enhanced portability and ease of use. 
-![workflow](SPLITREADER_v1/dag_workflow.svg)
+![workflow](/SPLITREADER/SPLITREADER_v1/dag_workflow.svg)
 
 ## For citation
 
