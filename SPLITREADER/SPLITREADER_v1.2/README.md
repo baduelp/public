@@ -14,11 +14,11 @@ git clone https://github.com/baduelp/public/SPLITREADER.git
 
 #### First Step: 
 
-Fill the file `config.yml` with full paths.
+Fill in `config.yml` file with the full paths corresponding to your directory of installation.
 
 #### Second step: 
 
-You need the following files to run the SPLITREADER pipeline :
+You will need the following files to run the SPLITREADER pipeline :
 
 **in $workspace_dir/$ref_dir**
 
