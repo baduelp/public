@@ -10,15 +10,14 @@
 
 git clone https://github.com/baduelp/public/SPLITREADER.git
 
+
 ### Run SPLITREADER 
 
 #### First Step: 
 
-Fill in the `config.yml` file with the full paths corresponding to your directory of installation.
+Create a $workspace_dir from where you will run the SPLITREADER pipeline.
 
-#### Second step: 
-
-You will need the following files to run the SPLITREADER pipeline :
+In this $workspace_dir, you will need the following setup files:
 
 **in $workspace_dir/$ref_dir**
 
@@ -31,6 +30,10 @@ You will need the following files to run the SPLITREADER pipeline :
 - $TE_lib.fasta : *file with the sequence of all the TEs annotated in the reference genome.*
 - TEfamily-superfamily.txt : *file with TE names in the 1st column and their respective superfamily in the 2nd column.*
 - $TE_annotation.gff *file of the TEs annotated.*
+- 
+#### Second step: 
+
+Fill in the `config.yml` file with the full paths corresponding to the location of your setup and input files ($workspace_dir, $ref_dir, etc) and define the names of the filename variables ($genome, $TE_lib, etc) to match those above.
 
 #### Third step:
 
