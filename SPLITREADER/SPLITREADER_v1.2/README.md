@@ -1,14 +1,14 @@
 ## SPLITREADER_v1.2
 
-### Clone the SPLITREADER branch
-
-git clone https://github.com/baduelp/public/SPLITREADER.git
-
-### Installation Conda
+### Install Conda
 
 - **Windows:** [Installation Conda on Windows](https://docs.conda.io/projects/conda/en/latest/user-guide/install/windows.html)
 
 - **Linux:** [Installation Conda on Linux](https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html)
+
+### Clone the SPLITREADER branch
+
+git clone https://github.com/baduelp/public/SPLITREADER.git
 
 ### Run SPLITREADER 
 
