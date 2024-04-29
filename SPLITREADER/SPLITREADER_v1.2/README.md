@@ -19,7 +19,7 @@ Create a $workspace_dir from where you will run the SPLITREADER pipeline.
 
 In this $workspace_dir, you will need the following setup files:
 
-**in $workspace_dir/$ref_dir**
+**in $workspace_dir/Reference**
 
 - $genome.fasta file with the reference genome sequence (for *A. thaliana* the TAIR10 reference genome fasta can be downloaded **[here](https://www.arabidopsis.org/download/index-auto.jsp?dir=%2Fdownload_files%2FGenes%2FTAIR10_genome_release%2FTAIR10_chromosome_files))**
 
