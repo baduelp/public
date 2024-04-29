@@ -14,7 +14,7 @@ git clone https://github.com/baduelp/public/SPLITREADER.git
 
 #### First Step: 
 
-Fill in `config.yml` file with the full paths corresponding to your directory of installation.
+Fill in the `config.yml` file with the full paths corresponding to your directory of installation.
 
 #### Second step: 
 
@@ -22,7 +22,7 @@ You will need the following files to run the SPLITREADER pipeline :
 
 **in $workspace_dir/$ref_dir**
 
-- $genome.fasta file with the reference genome sequence (test: *A.thaliana* => **[link to the genome file](https://www.arabidopsis.org/download/index-auto.jsp?dir=%2Fdownload_files%2FGenes%2FTAIR10_genome_release%2FTAIR10_chromosome_files))**
+- $genome.fasta file with the reference genome sequence (for *A. thaliana* the TAIR10 reference genome fasta can be downloaded **[here](https://www.arabidopsis.org/download/index-auto.jsp?dir=%2Fdownload_files%2FGenes%2FTAIR10_genome_release%2FTAIR10_chromosome_files))**
 
 **in $workspace_dir/TE_sequence**
 
