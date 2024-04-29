@@ -16,7 +16,7 @@
 
 Create a `$WORKSPACE_DIR` from where you will run the SPLITREADER pipeline.
 
-In this `$WORKSPACE_DIR`, you will need the following setup files:
+In this `$WORKSPACE_DIR`, you will need the following meta files:
 
 **in `$WORKSPACE_DIR/Reference`**
 
@@ -32,7 +32,7 @@ In this `$WORKSPACE_DIR`, you will need the following setup files:
 
 #### Second step: 
 
-Fill in the `config.yml` file with the full paths corresponding to the location of your setup and input files (`$WORKSPACE_DIR`, `$REFERENCE_DIR`, etc) and define the names of the filename variables (`$genome`, `$TE_lib`, etc) to match those above.
+Fill in the `config.yml` file with the full paths corresponding to the location of your input and meta files (`$WORKSPACE_DIR`, `$REFERENCE_DIR`, etc) and define the names of the filename variables (`$genome`, `$TE_lib`, etc) to match those above.
 
 #### Third step:
 
