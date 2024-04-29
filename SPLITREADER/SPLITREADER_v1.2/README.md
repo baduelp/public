@@ -29,7 +29,7 @@ In this `$workspace_dir`, you will need the following setup files:
 - `$TE_lib.fasta` : *file with the sequence of all the TEs annotated in the reference genome.*
 - `TEfamily-superfamily.txt` : *file with TE names in the 1st column and their respective superfamily in the 2nd column.*
 - `$TE_annotation.gff`: *file of the TEs annotated.*
-- 
+
 #### Second step: 
 
 Fill in the `config.yml` file with the full paths corresponding to the location of your setup and input files ($workspace_dir, $ref_dir, etc) and define the names of the filename variables ($genome, $TE_lib, etc) to match those above.
