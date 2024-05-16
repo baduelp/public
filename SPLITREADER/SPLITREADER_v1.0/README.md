@@ -8,7 +8,7 @@ The main wrapper script /thaliana/Submit_thaliana_SPLITREADER.sh can then be use
 
 If you have any question please contact me through the channels listed [here](http://pbaduel.com/about).
 
-### For citation
+## For citation
 
 **Baduel P**, Quadrana L, Colot V. Efficient detection of transposable element insertion polymorphisms between genomes using short-read sequencing data. Plant Transposable Elements, Methods in Molecular Biology, [10.1007/978-1-0716-1134-0_15](https://doi.org/10.1007/978-1-0716-1134-0_15), 04/2021.
 
