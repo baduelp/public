@@ -7,3 +7,10 @@ In addition to the TE annotation files provided a fasta file of the reference ge
 The main wrapper script /thaliana/Submit_thaliana_SPLITREADER.sh can then be used to run all the steps of the pipeline.  <br/>
 
 If you have any question please contact me through the channels listed [here](http://pbaduel.com/about).
+
+### For citation
+
+**Baduel P**, Quadrana L, Colot V. Efficient detection of transposable element insertion polymorphisms between genomes using short-read sequencing data. Plant Transposable Elements, Methods in Molecular Biology, [10.1007/978-1-0716-1134-0_15](https://doi.org/10.1007/978-1-0716-1134-0_15), 04/2021.
+
+**Quadrana L**, Bortolini Silveira A, Mayhew GF, LeBlanc C, Martienssen R, Jeddeloh JA, Colot V. The Arabidopsis thaliana mobilome and its impact at the species level. eLife, [10.1007/978-1-0716-1134-0_15](https://doi.org/10.7554/eLife.15716), 06/2016.
+
