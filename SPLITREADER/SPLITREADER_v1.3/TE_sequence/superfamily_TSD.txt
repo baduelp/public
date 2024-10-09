@@ -1,0 +1,6 @@
+Superfamily TSDlength
+En-Spm	3
+Copia	5
+Gypsy	5
+Harbinger	3
+Helitron	0

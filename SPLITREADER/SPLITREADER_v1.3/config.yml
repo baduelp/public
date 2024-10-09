@@ -1,0 +1,27 @@
+# all paths have to be absolute
+DATA:
+  WORKSPACE_DIR:     "/path/to/workspace"           # path to the workspace directory
+  BAM_DIR:           "/path/to/BAMs"                # path to the bam files
+  REFERENCE:         "/path/to/Reference"           # path to reference genome annotation files
+  SCRIPT_DIR:        "/path/to/SPLITREADER/scripts" # location of SPLITREADER scripts
+  TMP_DIR:           "/path/to/tmp"                 # path to the temporary directory
+  GENOME:            "Genome Name"
+  TE_LIB:            "Name of TE library fasta, without the extension .fasta"
+  TE_ANNOTATION:     "Name of the TE annotation gff, without the extension .gff"
+  BAMEXT:            "Extension of the BAM files"   # e.g. if the bam files are test.sort.bam, write ".sort"
+  COHORTNAME:        "TE_capture_accessions"
+
+PARAMS:
+  DEPTH:             3            # Minimum number of reads (split+discordant)
+  LS:                200          # Library size
+  MAXCOV:            100          # maximum negative coverage over insertion sites to remove regions with aberrant sequencing depth
+  DPrefmin:          5            # minimum negative coverage over insertion sites required to be confident that an insertion is indeed absent (for the NEGATIVE_COVERAGE part)
+  LENGTH:            150          # read length
+  ENTROPY:           0.7          # Value of Entropy for the Low complexity filter of part1. Needs a value between 0 and 1. See https://prinseq.sourceforge.net/manual.html : Sequence Complexity
+  DUST:              0.07         # Value of Dust score for the Low complexity filter of part1. Needs a value between 0 and 1. See https://prinseq.sourceforge.net/manual.html : Sequence Complexity
+  SNAKEMAKE_THREADS: 5            # number of threads for Snakemake ==> !! see README
+  INTERNAL_THREADS:  5            # number of threads for the SPLITREADER ! Has to be inferior or equal to SNAKEMAKE_THREADS
+  MEMORY:            40           # Memory for the SPLITREADER, in Giga (mainly for the part1, can have a huge peak !!!)
+
+CHOICE:
+  NEGATIVE_COVERAGE: True         # True if you want the Negative Coverage filter to be applied, False if not.
