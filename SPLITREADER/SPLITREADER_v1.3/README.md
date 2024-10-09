@@ -1,4 +1,4 @@
-## SPLITREADER_v1.2
+## SPLITREADER_v1.3
 
 ### Installing Conda
 
